@@ -68,6 +68,21 @@ const App: React.FC = () => {
     setCurrentIndex(0);
   }, []);
 
+  useEffect(() => {
+    try {
+      const hashParams = new URLSearchParams(window.location.hash.slice(1));
+      const hashText = hashParams.get("text");
+      const prefilledText = hashText?.trim();
+
+      if (!prefilledText) return;
+
+      setText(prefilledText);
+      reset();
+    } catch {
+      // Ignore malformed hash payloads and keep default text.
+    }
+  }, [reset]);
+
   const enterZenMode = () => {
     setIsZenMode(true);
     setShowZenHint(true);

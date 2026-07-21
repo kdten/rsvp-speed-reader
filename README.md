@@ -21,6 +21,7 @@
 - **Monospaced Precision**: Uses `JetBrains Mono` for consistent character width, preventing visual "jitter".
 - **Focus Music**: Integrated ambient soundscapes to help maintain concentration.
 - **Progress Tracking**: Real-time progress bar and word counter.
+- **Deep-Link Text Input**: Prefill content from other apps via URL hash using `#text=` (URL-encoded) for large texts, e.g. https://snowfluke.github.io/rsvp-speed-reader/#text=Hello%20world
 
 ---
 
