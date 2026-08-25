@@ -39,7 +39,7 @@ const App: React.FC = () => {
     useState<boolean>(false);
   const [wpmJumpStep, setWpmJumpStep] = useState<number>(50);
   const [enableSpeedVariability, setEnableSpeedVariability] =
-    useState<boolean>(false);
+    useState<boolean>(true);
   const [font, setFont] = useState<AppFont>("mono");
   const [fontWeight, setFontWeight] = useState<AppFontWeight>("bold");
   const [sideOpacity, setSideOpacity] = useState<number>(0.8);
