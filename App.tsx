@@ -25,7 +25,7 @@ import {
 import RSVPPlayer from "./components/RSVPPlayer";
 import BackgroundMusic from "./components/BackgroundMusic";
 import VideoExportButton from "./components/VideoExportButton";
-import { processText } from "./utils/textProcessor";
+import { processText, calculateVariabilityNormalizer } from "./utils/textProcessor";
 import { WordData, AppFont, AppFontWeight } from "./types";
 
 const App: React.FC = () => {
@@ -53,6 +53,11 @@ const App: React.FC = () => {
   const [showZenHint, setShowZenHint] = useState<boolean>(false);
 
   const words = useMemo(() => processText(text), [text]);
+
+  const variabilityNormalizer = useMemo(
+    () => calculateVariabilityNormalizer(words, enableSpeedVariability),
+    [words, enableSpeedVariability]
+  );
 
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -130,7 +135,9 @@ const App: React.FC = () => {
       const lengthMultiplier = enableSpeedVariability
         ? word?.lengthMultiplier || 1
         : 1;
-      const interval = (60000 / currentWpm) * pauseMultiplier * lengthMultiplier;
+      const interval =
+        ((60000 / currentWpm) * pauseMultiplier * lengthMultiplier) /
+        variabilityNormalizer;
 
       timerRef.current = setTimeout(() => {
         setCurrentIndex((prev) => {
@@ -157,6 +164,7 @@ const App: React.FC = () => {
     initialWpm,
     targetWpm,
     enableSpeedVariability,
+    variabilityNormalizer,
   ]);
 
   const progress =

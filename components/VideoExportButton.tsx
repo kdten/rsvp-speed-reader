@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Download, Loader2, Video } from 'lucide-react';
 import { WordData, AppFont, AppFontWeight } from '../types';
-import { splitWord } from '../utils/textProcessor';
+import { splitWord, calculateVariabilityNormalizer } from '../utils/textProcessor';
 
 interface VideoExportButtonProps {
   words: WordData[];
@@ -75,10 +75,12 @@ const VideoExportButton: React.FC<VideoExportButtonProps> = ({
     const totalFrames = words.length * Math.max(1, Math.round((60000 / (enableGradualIncrease ? Math.min(initialWpm, targetWpm) : wpm) / 1000) * 60)); // Approximate for estimation
     const frameInterval = 1000 / 60; // 60fps
 
+    const variabilityNormalizer = calculateVariabilityNormalizer(words, enableSpeedVariability);
+
     let currentFrame = 0;
     for (let i = 0; i < words.length; i++) {
         const word = words[i];
-        
+
         let currentWordWpm = wpm;
         if (enableGradualIncrease) {
             const progressRatio = i / (words.length - 1 || 1);
@@ -89,7 +91,9 @@ const VideoExportButton: React.FC<VideoExportButtonProps> = ({
         const lengthMultiplier = enableSpeedVariability
           ? word.lengthMultiplier || 1
           : 1;
-        const interval = (60000 / currentWordWpm) * pauseMultiplier * lengthMultiplier;
+        const interval =
+          ((60000 / currentWordWpm) * pauseMultiplier * lengthMultiplier) /
+          variabilityNormalizer;
         const framesPerWord = Math.max(1, Math.round((interval / 1000) * 60));
         
         for (let frame = 0; frame < framesPerWord; frame++) {

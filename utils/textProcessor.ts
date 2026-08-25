@@ -34,6 +34,28 @@ export const calculateLengthMultiplier = (word: string): number => {
   return Math.min(MAX_LENGTH_MULTIPLIER, Math.max(MIN_LENGTH_MULTIPLIER, multiplier));
 };
 
+/**
+ * The pause/length multipliers are shaped around fixed assumptions (e.g. a
+ * "5-char average word"), which rarely match any given text exactly.
+ * Normalizing by the text's actual mean multiplier keeps total playback
+ * time at wordCount * (60000 / wpm), so the selected WPM is an exact
+ * average rather than an approximation - regardless of word-length
+ * distribution or how much punctuation the text contains.
+ */
+export const calculateVariabilityNormalizer = (
+  words: WordData[],
+  enableSpeedVariability: boolean
+): number => {
+  if (words.length === 0) return 1;
+  const meanMultiplier =
+    words.reduce(
+      (sum, w) =>
+        sum + w.pauseMultiplier * (enableSpeedVariability ? w.lengthMultiplier : 1),
+      0
+    ) / words.length;
+  return meanMultiplier || 1;
+};
+
 export const processText = (text: string): WordData[] => {
   if (!text) return [];
 
