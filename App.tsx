@@ -43,9 +43,7 @@ const App: React.FC = () => {
   const [font, setFont] = useState<AppFont>("mono");
   const [fontWeight, setFontWeight] = useState<AppFontWeight>("bold");
   const [sideOpacity, setSideOpacity] = useState<number>(0.8);
-  const [audioSrc, setAudioSrc] = useState<string>(
-    "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"
-  );
+  const [audioSrc, setAudioSrc] = useState<string>("");
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const [currentIndex, setCurrentIndex] = useState<number>(0);
   const [showSettings, setShowSettings] = useState<boolean>(false);
