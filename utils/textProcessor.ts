@@ -13,6 +13,27 @@ export const calculateFocalIndex = (word: string): number => {
   return 4;
 };
 
+// The standard WPM convention treats a "word" as 5 characters, so 5 is used
+// as the neutral point: words at this length get a 1x multiplier, and the
+// nominal WPM is the average across a text whose word lengths center on it.
+const AVERAGE_WORD_LENGTH = 5;
+const MIN_LENGTH_MULTIPLIER = 0.7;
+const MAX_LENGTH_MULTIPLIER = 1.5;
+const LENGTH_VARIABILITY_STRENGTH = 0.08;
+
+/**
+ * Calculates a display-duration multiplier based on word length, so shorter
+ * words flash faster and longer words linger, while keeping the multiplier
+ * centered on 1 (neutral) at the conventional 5-character "average" word.
+ */
+export const calculateLengthMultiplier = (word: string): number => {
+  const strippedLength = word.replace(/[^\p{L}\p{N}]/gu, "").length;
+  const length = strippedLength || word.length;
+  const multiplier = 1 + (length - AVERAGE_WORD_LENGTH) * LENGTH_VARIABILITY_STRENGTH;
+
+  return Math.min(MAX_LENGTH_MULTIPLIER, Math.max(MIN_LENGTH_MULTIPLIER, multiplier));
+};
+
 export const processText = (text: string): WordData[] => {
   if (!text) return [];
 
@@ -31,6 +52,7 @@ export const processText = (text: string): WordData[] => {
       text: word,
       focalIndex: calculateFocalIndex(word),
       pauseMultiplier,
+      lengthMultiplier: calculateLengthMultiplier(word),
     };
   });
 };

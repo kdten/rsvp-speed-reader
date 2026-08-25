@@ -12,17 +12,19 @@ interface VideoExportButtonProps {
   enableGradualIncrease?: boolean;
   initialWpm?: number;
   targetWpm?: number;
+  enableSpeedVariability?: boolean;
 }
 
-const VideoExportButton: React.FC<VideoExportButtonProps> = ({ 
-  words, 
-  wpm, 
-  font, 
-  fontWeight, 
+const VideoExportButton: React.FC<VideoExportButtonProps> = ({
+  words,
+  wpm,
+  font,
+  fontWeight,
   sideOpacity,
   enableGradualIncrease = false,
   initialWpm = 300,
-  targetWpm = 600
+  targetWpm = 600,
+  enableSpeedVariability = false
 }) => {
   const [isExporting, setIsExporting] = useState(false);
   const [progress, setProgress] = useState(0);
@@ -84,7 +86,10 @@ const VideoExportButton: React.FC<VideoExportButtonProps> = ({
         }
 
         const pauseMultiplier = word.pauseMultiplier || 1;
-        const interval = (60000 / currentWordWpm) * pauseMultiplier;
+        const lengthMultiplier = enableSpeedVariability
+          ? word.lengthMultiplier || 1
+          : 1;
+        const interval = (60000 / currentWordWpm) * pauseMultiplier * lengthMultiplier;
         const framesPerWord = Math.max(1, Math.round((interval / 1000) * 60));
         
         for (let frame = 0; frame < framesPerWord; frame++) {
